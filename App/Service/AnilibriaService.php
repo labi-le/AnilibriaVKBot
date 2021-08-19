@@ -47,6 +47,12 @@ final class AnilibriaService
     {
     }
 
+    /**
+     * Генератор текста
+     * @param array $data
+     * @param int|null $current_serie
+     * @return string
+     */
     public static function generateTemplateText(array $data, int $current_serie = null): string
     {
         $template_text = "%s\n\nТип: %s\nСтатус: %s\nЖанры: %s\nСезон: %s\nОзвучили: %s\nТаймили: %s\n\n%s";
@@ -120,16 +126,6 @@ final class AnilibriaService
             ->setKeyboard(@json_encode($patch_keyboard))
             ->setPeerId($data->getPeerId());
     }
-
-//    public static function encryptPayload(string $payload): string
-//    {
-//        return @openssl_encrypt($payload, ENCRYPT_ALGO, ENCRYPT_PASSPHRASE);
-//    }
-//
-//    public static function decryptPayload(string $payload): string
-//    {
-//        return @openssl_decrypt($payload, ENCRYPT_ALGO, ENCRYPT_PASSPHRASE);
-//    }
 
     /**
      * Выбрать желаемый эпизод\серию
