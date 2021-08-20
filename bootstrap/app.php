@@ -3,4 +3,4 @@
 use Astaroth\Foundation\Application;
 
 $app = new Application();
-$app->run(__DIR__);
+$app->run(type: Application::PRODUCTION);
