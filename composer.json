@@ -12,9 +12,8 @@
     "minimum-stability": "stable",
 
     "require": {
-        "labile/astaroth-core": "dev-main",
-        "labile/anilibria-api-wrapper": ">=1",
-        "opis/closure": "^3.6"
+        "labile/astaroth-core": ">=2",
+        "labile/anilibria-api-wrapper": ">=1"
     },
 
     "autoload-dev": {
