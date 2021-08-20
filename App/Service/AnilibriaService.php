@@ -129,7 +129,6 @@ final class AnilibriaService
             ->setPeerId($data->getPeerId());
     }
 
-
     /**
      * Выбрать желаемый эпизод\серию
      * @param Data|EventData $data

@@ -13,7 +13,6 @@ use Astaroth\Foundation\Session;
 use Astaroth\Support\Facades\RequestFacade;
 use Astaroth\Support\Facades\UploaderFacade;
 use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
-use Astaroth\VkUtils\Builders\Message;
 
 #[MessageEvent]
 #[Conversation(Conversation::PERSONAL_DIALOG)]
@@ -62,20 +61,12 @@ final class Player extends BaseCommands
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_RANDOM])]
     public function randomAnimeButton(Data $data): void
     {
-        RequestFacade::request("messages.sendMessageEventAnswer",
+        $this->sendMessageEventAnswer($data,
             [
-                "event_id" => $data->getEventId(),
-                "user_id" => $data->getUserId(),
-                "peer_id" => $data->getPeerId(),
-                "event_data" => json_encode(
-                    [
-                        "type" => "show_snackbar",
-                        "text" => "Бросаю кубик &#127922;"
-                    ]
-                )
+                "type" => "show_snackbar",
+                "text" => "Бросаю кубик &#127922;"
             ]
         );
-
         AnilibriaService::animePreviewer($data, Method::getRandomTitle());
     }
 
@@ -158,19 +149,11 @@ final class Player extends BaseCommands
         $session->put(AnilibriaService::CODE, $payload_anime_code);
         $session->put(AnilibriaService::SELECTED, false);
 
-        RequestFacade::request("messages.sendMessageEventAnswer",
+        $this->sendMessageEventAnswer($data,
             [
-                "event_id" => $data->getEventId(),
-                "user_id" => $data->getUserId(),
-                "peer_id" => $data->getPeerId(),
-                "event_data" => json_encode(
-                    [
-                        "type" => "show_snackbar",
-                        "text" => "Какая тебе серия нужна?"
-                    ]
-                )
-            ]
-        );
+                "type" => "show_snackbar",
+                "text" => "Какая тебе серия нужна?"
+            ]);
 
         RequestFacade::request("messages.delete",
             [
