@@ -38,6 +38,8 @@ final class AnilibriaService
     public const FORWARD = "forward";
     public const BACK = "back";
     public const PLAY = "play";
+    public const WATCH = "watch";
+    public const EPISODE = "episode";
 
     public const WRONG_SELECTED_NOTICE = 19;
     public const NOT_FOUND_ANIME_NOTICE = 404;
@@ -99,14 +101,14 @@ final class AnilibriaService
         $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $stream) {
             return [
                 [
-                    $factory->callback("Назад", ["menu" => "back", "code" => $anime["code"]], Text::COLOR_BLUE),
-                    $factory->callback("Вперёд", ["menu" => "forward", "code" => $anime["code"]]),
+                    $factory->callback("Назад", [self::MENU => self::BACK, self::CODE => $anime[self::CODE]], Text::COLOR_BLUE),
+                    $factory->callback("Вперёд", [self::MENU => self::FORWARD, self::CODE => $anime[self::CODE]]),
                 ],
                 [
-                    $factory->link("Смотреть", $stream, [])
+                    $factory->callback("Смотреть", [self::MENU => self::WATCH, self::EPISODE => $stream], Text::COLOR_GRAY)
                 ],
                 [
-                    $factory->callback("Выбрать серию", ["menu" => "select-episode", "code" => $anime["code"]], Text::COLOR_BLUE)
+                    $factory->callback("Выбрать серию", [self::MENU => self::SELECT_EPISODE, self::CODE => $anime[self::CODE]], Text::COLOR_BLUE)
                 ]
             ];
         });
@@ -122,10 +124,11 @@ final class AnilibriaService
 
         return (new Message())
             ->setMessage(self::generateTemplateText($anime, $current_episode))
-            ->setAttachment($anime["vk_cache_preview"])
+            ->setAttachment($anime[self::VK_CACHE_PREVIEW])
             ->setKeyboard(@json_encode($patch_keyboard))
             ->setPeerId($data->getPeerId());
     }
+
 
     /**
      * Выбрать желаемый эпизод\серию
@@ -138,7 +141,7 @@ final class AnilibriaService
         $anime = new Session($data->getPeerId(), $session->get(self::CODE));
 
         $desiredEpisode = (int)$data->getText();
-        if ($desiredEpisode) {
+        if ($desiredEpisode && $anime->get(self::LAST_EPISODE) >= $desiredEpisode) {
             BuilderFacade::create(self::generateTemplate($data, $anime->get(self::DATA), $desiredEpisode));
         } else {
             self::notice($data, self::WRONG_SELECTED_NOTICE);
@@ -215,8 +218,8 @@ final class AnilibriaService
     public static function notice(Data $data, int $noticeType): void
     {
         $message = match ($noticeType) {
-            self::WRONG_SELECTED_NOTICE => "Ты видимо забыл цифры, тогда и я забуду!",
-            self::NOT_FOUND_ANIME_NOTICE => "Я ничево не смог найти 🥺",
+            self::WRONG_SELECTED_NOTICE => "Ты чё цифры попутал 😠",
+            self::NOT_FOUND_ANIME_NOTICE => "Я ничево не смогла найти 🥺",
         };
 
         BuilderFacade::create(

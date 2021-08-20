@@ -40,6 +40,25 @@ final class Player extends BaseCommands
         );
     }
 
+    #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], Payload::CONTAINS)]
+    public function watch(Data $data)
+    {
+        $link = $data->getPayload()[AnilibriaService::EPISODE];
+        RequestFacade::request("messages.sendMessageEventAnswer",
+            [
+                "event_id" => $data->getEventId(),
+                "user_id" => $data->getUserId(),
+                "peer_id" => $data->getPeerId(),
+                "event_data" => json_encode(
+                    [
+                        "type" => "open_link",
+                        "link" => $link
+                    ]
+                )
+            ]
+        );
+    }
+
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_RANDOM])]
     public function randomAnimeButton(Data $data): void
     {
@@ -139,13 +158,25 @@ final class Player extends BaseCommands
         $session->put(AnilibriaService::CODE, $payload_anime_code);
         $session->put(AnilibriaService::SELECTED, false);
 
-        $max = $session->changeType($payload_anime_code)->get(AnilibriaService::LAST_EPISODE);
+        RequestFacade::request("messages.sendMessageEventAnswer",
+            [
+                "event_id" => $data->getEventId(),
+                "user_id" => $data->getUserId(),
+                "peer_id" => $data->getPeerId(),
+                "event_data" => json_encode(
+                    [
+                        "type" => "show_snackbar",
+                        "text" => "Какая тебе серия нужна?"
+                    ]
+                )
+            ]
+        );
 
-        $this->messagesEdit(
-            (new Message())
-                ->setMessage("Напиши серию которую я могу тебе показать\n\nУ тебя есть выбор от 1 до $max")
-                ->setPeerId($data->getPeerId()),
-            $data->getConversationMessageId()
+        RequestFacade::request("messages.delete",
+            [
+                "conversation_message_ids" => $data->getConversationMessageId(),
+                "peer_id" => $data->getPeerId()
+            ]
         );
     }
 }
