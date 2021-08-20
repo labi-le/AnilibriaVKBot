@@ -1,7 +1,0 @@
-#.env
-docker
-docker-compose.yml
-LICENSE
-README.md
-vendor
-.idea
