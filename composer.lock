@@ -165,36 +165,69 @@
             "time": "2021-08-13T18:25:15+00:00"
         },
         {
-            "name": "labile/astaroth-core",
-            "version": "2.4.5",
+            "name": "labile/astaroth-contracts",
+            "version": "1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/labi-le/astaroth-core.git",
-                "reference": "5397b411c4c8735acf2e26cf7a5feba42c16d0a0"
+                "url": "https://github.com/labi-le/astaroth-contracts.git",
+                "reference": "3d20929286bc53be57c4c036ed6df827914f2890"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labi-le/astaroth-core/zipball/5397b411c4c8735acf2e26cf7a5feba42c16d0a0",
-                "reference": "5397b411c4c8735acf2e26cf7a5feba42c16d0a0",
+                "url": "https://api.github.com/repos/labi-le/astaroth-contracts/zipball/3d20929286bc53be57c4c036ed6df827914f2890",
+                "reference": "3d20929286bc53be57c4c036ed6df827914f2890",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Astatorh\\Contracts\\": "src/Contracts"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "labile",
+                    "email": "1a6i1e@gmail.com"
+                }
+            ],
+            "description": "Contracts for astaroth core",
+            "support": {
+                "issues": "https://github.com/labi-le/astaroth-contracts/issues",
+                "source": "https://github.com/labi-le/astaroth-contracts/tree/1.0"
+            },
+            "time": "2021-08-28T14:56:52+00:00"
+        },
+        {
+            "name": "labile/astaroth-core",
+            "version": "2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/labi-le/astaroth-core.git",
+                "reference": "5eb513d736c2c4d550202212093f6092ae0f8ee6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/labi-le/astaroth-core/zipball/5eb513d736c2c4d550202212093f6092ae0f8ee6",
+                "reference": "5eb513d736c2c4d550202212093f6092ae0f8ee6",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "haydenpierce/class-finder": "^0.4.3",
-                "labile/text-matcher": ">=1",
-                "labile/vk-callback": ">=1",
-                "labile/vk-data-fetcher": ">=1.2",
+                "labile/text-matcher": "^1",
+                "labile/vk-callback": "^2",
+                "labile/vk-data-fetcher": "^1.3",
                 "labile/vk-keyboard": "^1.1",
-                "labile/vk-longpoll": ">=1.1",
-                "labile/vk-utils": ">=1.5.1",
+                "labile/vk-longpoll": "^2",
+                "labile/vk-utils": "^2",
                 "php": ">=8.0",
                 "symfony/console": "^5.3",
                 "symfony/dependency-injection": "^5.3",
                 "vlucas/phpdotenv": "^5.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=9.5.5",
-                "roave/security-advisories": "dev-latest"
             },
             "type": "library",
             "autoload": {
@@ -215,9 +248,9 @@
             "description": "astaroth framework core",
             "support": {
                 "issues": "https://github.com/labi-le/astaroth-core/issues",
-                "source": "https://github.com/labi-le/astaroth-core/tree/2.4.5"
+                "source": "https://github.com/labi-le/astaroth-core/tree/2.5.1"
             },
-            "time": "2021-08-20T19:37:32+00:00"
+            "time": "2021-08-28T17:30:20+00:00"
         },
         {
             "name": "labile/text-matcher",
@@ -260,17 +293,21 @@
         },
         {
             "name": "labile/vk-callback",
-            "version": "1.1.3",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labi-le/vk-callback.git",
-                "reference": "8cf4dff3261af12b66a04d7865b59334674fcfea"
+                "reference": "ea5d9c2073666d828122f1fc3f5c31a3962e84a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labi-le/vk-callback/zipball/8cf4dff3261af12b66a04d7865b59334674fcfea",
-                "reference": "8cf4dff3261af12b66a04d7865b59334674fcfea",
+                "url": "https://api.github.com/repos/labi-le/vk-callback/zipball/ea5d9c2073666d828122f1fc3f5c31a3962e84a9",
+                "reference": "ea5d9c2073666d828122f1fc3f5c31a3962e84a9",
                 "shasum": ""
+            },
+            "require": {
+                "labile/astaroth-contracts": "^1.0",
+                "php": ">=8.0"
             },
             "type": "library",
             "autoload": {
@@ -287,9 +324,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labi-le/vk-callback/issues",
-                "source": "https://github.com/labi-le/vk-callback/tree/1.1.3"
+                "source": "https://github.com/labi-le/vk-callback/tree/2.0"
             },
-            "time": "2021-08-12T20:42:32+00:00"
+            "time": "2021-08-28T15:59:13+00:00"
         },
         {
             "name": "labile/vk-data-fetcher",
@@ -381,25 +418,24 @@
         },
         {
             "name": "labile/vk-longpoll",
-            "version": "1.1.1",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labi-le/vk-longpoll.git",
-                "reference": "925cb829acedb955fed76d7cc08a8f1eb799b7bf"
+                "reference": "16b4335007ad187bfc359db2b4cbd396c75703ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labi-le/vk-longpoll/zipball/925cb829acedb955fed76d7cc08a8f1eb799b7bf",
-                "reference": "925cb829acedb955fed76d7cc08a8f1eb799b7bf",
+                "url": "https://api.github.com/repos/labi-le/vk-longpoll/zipball/16b4335007ad187bfc359db2b4cbd396c75703ce",
+                "reference": "16b4335007ad187bfc359db2b4cbd396c75703ce",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "labile/vk-utils": ">=1.3.1"
-            },
-            "require-dev": {
-                "roave/security-advisories": "dev-latest"
+                "labile/astaroth-contracts": "^1.0",
+                "php": ">=7.4"
             },
             "type": "library",
             "autoload": {
@@ -417,24 +453,25 @@
                     "email": "1a6i1e@gmail.com"
                 }
             ],
+            "description": "Bots Long Poll API component",
             "support": {
                 "issues": "https://github.com/labi-le/vk-longpoll/issues",
-                "source": "https://github.com/labi-le/vk-longpoll/tree/1.1.1"
+                "source": "https://github.com/labi-le/vk-longpoll/tree/2.0"
             },
-            "time": "2021-08-12T19:13:13+00:00"
+            "time": "2021-08-28T15:01:09+00:00"
         },
         {
             "name": "labile/vk-utils",
-            "version": "2",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labi-le/vk-utils.git",
-                "reference": "41497c3e7e5ed525a5ff5b8c038f5b23a1bdb852"
+                "reference": "324b9cf548e7c3641de1856789437c03d6c5e17d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labi-le/vk-utils/zipball/41497c3e7e5ed525a5ff5b8c038f5b23a1bdb852",
-                "reference": "41497c3e7e5ed525a5ff5b8c038f5b23a1bdb852",
+                "url": "https://api.github.com/repos/labi-le/vk-utils/zipball/324b9cf548e7c3641de1856789437c03d6c5e17d",
+                "reference": "324b9cf548e7c3641de1856789437c03d6c5e17d",
                 "shasum": ""
             },
             "require": {
@@ -474,9 +511,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labi-le/vk-utils/issues",
-                "source": "https://github.com/labi-le/vk-utils/tree/2"
+                "source": "https://github.com/labi-le/vk-utils/tree/2.1.1"
             },
-            "time": "2021-08-07T18:39:02+00:00"
+            "time": "2021-08-26T13:46:32+00:00"
         },
         {
             "name": "phpoption/phpoption",
