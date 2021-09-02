@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\AnilibriaService;
+use Astaroth\Attribute\ClientInfo;
 use Astaroth\Attribute\Conversation;
 use Astaroth\Attribute\Event\MessageNew;
 use Astaroth\Attribute\Message;
@@ -15,6 +16,16 @@ use Astaroth\TextMatcher;
 #[MessageNew]
 final class Anime extends BaseCommands
 {
+
+    #[ClientInfo([], keyboard: false, inline_keyboard: false, carousel: false)]
+    public function keyboardIncompatability(Data $data)
+    {
+        $this->message($data->getPeerId(), "Твой клиент не поддерживает современные функции вконтакте, обновись!");
+
+        return false;
+    }
+
+
     /**
      * Поиск аниме
      * Выбор эпизодов

@@ -1,6 +1,8 @@
 <?php
 
+require_once "./vendor/autoload.php";
+
 use Astaroth\Foundation\Application;
 
 $app = new Application();
-$app->run(type: Application::PRODUCTION);
+$app->run(dirname(__DIR__));
