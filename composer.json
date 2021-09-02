@@ -16,7 +16,7 @@
         "labile/anilibria-api-wrapper": ">=1"
     },
 
-    "autoload-dev": {
+    "autoload": {
         "psr-4": {
             "App\\": "App/"
         }
