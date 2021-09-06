@@ -9,7 +9,7 @@ use Astaroth\Attribute\Event\MessageNew;
 use Astaroth\Attribute\Message;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
-use Astaroth\Foundation\Session;
+use Astaroth\Support\Facades\Session;
 use Astaroth\TextMatcher;
 
 #[Conversation(Conversation::PERSONAL_DIALOG)]

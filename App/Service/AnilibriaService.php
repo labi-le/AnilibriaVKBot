@@ -5,9 +5,9 @@ namespace App\Service;
 use Astaroth\Anilibria\Method;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
 use Astaroth\DataFetcher\Events\MessageEvent as EventData;
-use Astaroth\Foundation\Session;
-use Astaroth\Support\Facades\BuilderFacade;
-use Astaroth\Support\Facades\UploaderFacade;
+use Astaroth\Support\Facades\Create;
+use Astaroth\Support\Facades\Session;
+use Astaroth\Support\Facades\Upload;
 use Astaroth\VkKeyboard\Contracts\Keyboard\Button\FactoryInterface;
 use Astaroth\VkKeyboard\Facade;
 use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
@@ -141,7 +141,7 @@ final class AnilibriaService
 
         $desiredEpisode = (int)$data->getText();
         if ($desiredEpisode && $anime->get(self::LAST_EPISODE) >= $desiredEpisode) {
-            BuilderFacade::create(self::generateTemplate($data, $anime->get(self::DATA), $desiredEpisode));
+            Create::new(self::generateTemplate($data, $anime->get(self::DATA), $desiredEpisode));
         } else {
             self::notice($data, self::WRONG_SELECTED_NOTICE);
         }
@@ -199,10 +199,10 @@ final class AnilibriaService
             ];
         });
 
-        BuilderFacade::create(
+        Create::new(
             (new Message())
                 ->setMessage(self::generateTemplateText($anime))
-                ->setAttachment(...UploaderFacade::upload(new PhotoMessages($preview)))
+                ->setAttachment(...Upload::attachments(new PhotoMessages($preview)))
                 ->setKeyboard($keyboard)
                 ->setPeerId($data->getPeerId())
         );
@@ -221,7 +221,7 @@ final class AnilibriaService
             self::NOT_FOUND_ANIME_NOTICE => "Я ничево не смогла найти 🥺",
         };
 
-        BuilderFacade::create(
+        Create::new(
             (new Message())->setMessage($message)
                 ->setPeerId($data->getPeerId())
         );
@@ -261,7 +261,7 @@ final class AnilibriaService
             $session->put(self::FOUND, $payload);
             $session->put(self::ENABLED, false);
 
-            BuilderFacade::create(
+            Create::new(
                 (new Message())
                     ->setMessage($template)
                     ->setPeerId($data->getPeerId())

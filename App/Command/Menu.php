@@ -9,8 +9,7 @@ use Astaroth\Attribute\Event\MessageNew;
 use Astaroth\Attribute\Message;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
-use Astaroth\Support\Facades\BuilderFacade;
-use Astaroth\TextMatcher;
+use Astaroth\Support\Facades\Create;
 use Astaroth\VkKeyboard\Contracts\Keyboard\Button\FactoryInterface;
 use Astaroth\VkKeyboard\Facade;
 use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
@@ -19,10 +18,13 @@ use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
 #[MessageNew]
 final class Menu extends BaseCommands
 {
-    #[Message("меню", TextMatcher::START_AS)] #[Message("начать", TextMatcher::START_AS)]
-    #[Message("старт", TextMatcher::START_AS)] #[Message("оняме", TextMatcher::START_AS)]
-    #[Message("/start", TextMatcher::START_AS)]
-    public function getStarted(Data $data): void
+    /**
+     * @throws \Throwable
+     */
+    #[Message("меню", Message::START_AS)] #[Message("начать", Message::START_AS)]
+    #[Message("старт", Message::START_AS)] #[Message("оняме", Message::START_AS)]
+    #[Message("/start", Message::START_AS)]
+    public function getStarted(Data $data, Create $create): void
     {
         $keyboard = Facade::createKeyboardBasic(function (FactoryInterface $factory) {
             return [
@@ -31,7 +33,7 @@ final class Menu extends BaseCommands
             ];
         }, false);
 
-        BuilderFacade::create(
+        $create(
             (new \Astaroth\VkUtils\Builders\Message())
                 ->setPeerId($data->getPeerId())
                 ->setMessage("приветик %@name")
