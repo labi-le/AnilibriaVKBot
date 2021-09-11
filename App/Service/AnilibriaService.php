@@ -6,6 +6,7 @@ use Astaroth\Anilibria\Method;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
 use Astaroth\DataFetcher\Events\MessageEvent as EventData;
 use Astaroth\Support\Facades\Create;
+use Astaroth\Support\Facades\Request;
 use Astaroth\Support\Facades\Session;
 use Astaroth\Support\Facades\Upload;
 use Astaroth\VkKeyboard\Contracts\Keyboard\Button\FactoryInterface;
@@ -23,7 +24,7 @@ final class AnilibriaService
 
     public const CURRENT_EPISODE = "current-episode";
     public const DATA = "data";
-    public const MIRROR = "https://dl3.anilib.top";
+    public const MIRROR = "https://dl-20210906-654.anilibria.cf";
 
     public const SELECT_EPISODE = "select-episode";
     public const ANIME_SEARCH = "anime-search";
@@ -186,6 +187,7 @@ final class AnilibriaService
         $preview = self::MIRROR . $anime["poster"]["url"];
 
         $link = self::MIRROR . "/release/" . $anime[self::CODE] . ".html";
+
         $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $link) {
             return [
                 [
