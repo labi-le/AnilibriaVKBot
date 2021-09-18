@@ -16,14 +16,15 @@ use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
 
 #[Conversation(Conversation::PERSONAL_DIALOG)]
 #[MessageNew]
-final class Menu extends BaseCommands
+final class StartWizard extends BaseCommands
 {
     /**
      * @throws \Throwable
      */
-    #[Message("меню", Message::START_AS)] #[Message("начать", Message::START_AS)]
-    #[Message("старт", Message::START_AS)] #[Message("оняме", Message::START_AS)]
-    #[Message("/start", Message::START_AS)]
+    #[
+        Message("меню"), Message("начать"), Message("старт"), Message("оняме"),
+        Message("/start"), Message("помощь"), Message("help"), Message("хелп")
+    ]
     public function getStarted(Data $data, Create $create): void
     {
         $keyboard = Facade::createKeyboardBasic(function (FactoryInterface $factory) {
@@ -36,7 +37,7 @@ final class Menu extends BaseCommands
         $create(
             (new \Astaroth\VkUtils\Builders\Message())
                 ->setPeerId($data->getPeerId())
-                ->setMessage("приветик %@name")
+                ->setMessage("Приветик %full-name\nВоспользуйся кнопками и они тебя наверняка приведут к успеху! 🥰")
                 ->setKeyboard($keyboard)
         );
     }

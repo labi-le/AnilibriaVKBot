@@ -11,19 +11,17 @@ use Astaroth\Commands\BaseCommands;
 use Astaroth\DataFetcher\Events\MessageEvent as Data;
 use Astaroth\Support\Facades\Request;
 use Astaroth\Support\Facades\Session;
+use Astaroth\Support\Facades\State;
 use Astaroth\Support\Facades\Upload;
 use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
 
-#[MessageEvent]
 #[Conversation(Conversation::PERSONAL_DIALOG)]
-final class Player extends BaseCommands
+#[MessageEvent]
+final class ButtonNavigation extends BaseCommands
 {
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_SEARCH])]
     public function searchAnimeButton(Data $data, Request $r): void
     {
-        (new Session($data->getPeerId(), AnilibriaService::ANIME_SEARCH))
-            ->put(AnilibriaService::ENABLED, true);
-
         $r::call("messages.sendMessageEventAnswer",
             [
                 "event_id" => $data->getEventId(),
@@ -37,6 +35,8 @@ final class Player extends BaseCommands
                 )
             ]
         );
+
+        State::add($data->getPeerId(), AnilibriaService::ANIME_SEARCH);
     }
 
     #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], Payload::CONTAINS)]
@@ -77,10 +77,10 @@ final class Player extends BaseCommands
      */
     public function play(Data $data, int $current = 1)
     {
-        $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
-        $session = new Session($data->getPeerId(), $payload_anime_code);
+        $payload_anime_code = (string)$data->getPayload()[AnilibriaService::CODE];
+        $session = new Session($data->getPeerId(), AnilibriaService::ANIME);
 
-        $anime = $session->get(AnilibriaService::DATA);
+        $anime = $session->get($payload_anime_code);
         if ($anime === null) {
             $anime = Method::getTitle(code: $payload_anime_code);
 
@@ -90,10 +90,12 @@ final class Player extends BaseCommands
             $first_episode = $anime["player"]["series"]["first"];
             $last_episode = $anime["player"]["series"]["last"];
 
-            $session->put(AnilibriaService::DATA, $anime);
-            $session->put(AnilibriaService::CURRENT_EPISODE, $current);
-            $session->put(AnilibriaService::FIRST_EPISODE, $first_episode);
-            $session->put(AnilibriaService::LAST_EPISODE, $last_episode);
+            $dataStructure = array_merge($anime, [
+                AnilibriaService::CURRENT_EPISODE => $current,
+                AnilibriaService::FIRST_EPISODE => $first_episode,
+                AnilibriaService::LAST_EPISODE => $last_episode,
+            ]);
+            $session->put($payload_anime_code, $dataStructure);
 
             $this->play($data, $current);
 
@@ -118,18 +120,21 @@ final class Player extends BaseCommands
     public function switcher(Data $data): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
-        $session = new Session($data->getPeerId(), $payload_anime_code);
+        $session = new Session($data->getPeerId(), AnilibriaService::ANIME);
 
-        $anime = $session->get(AnilibriaService::DATA);
-        $current = $session->get(AnilibriaService::CURRENT_EPISODE);
+        $anime = $session->get($payload_anime_code);
+
+        $current = $anime[AnilibriaService::CURRENT_EPISODE];
 
         if ($data->getPayload()[AnilibriaService::MENU] === AnilibriaService::BACK) {
-            $session->put(AnilibriaService::CURRENT_EPISODE, --$current);
+            --$current;
         }
 
         if ($data->getPayload()[AnilibriaService::MENU] === AnilibriaService::FORWARD) {
-            $session->put(AnilibriaService::CURRENT_EPISODE, ++$current);
+            ++$current;
         }
+
+        $session->put($payload_anime_code, array_merge($anime, [AnilibriaService::CURRENT_EPISODE => $current]));
 
         $this->messagesEdit(
             AnilibriaService::generateTemplate($data, $anime, $current),
@@ -138,16 +143,13 @@ final class Player extends BaseCommands
     }
 
     #[Payload(["menu" => AnilibriaService::SELECT_EPISODE], Payload::CONTAINS)]
-    /**
-     * Динамический плеер для пролистывания серий
-     */
     public function switch_episode(Data $data, Request $r): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
         $session = new Session($data->getPeerId(), AnilibriaService::SELECT_EPISODE);
 
         $session->put(AnilibriaService::CODE, $payload_anime_code);
-        $session->put(AnilibriaService::SELECTED, false);
+        State::add($data->getPeerId(), AnilibriaService::SELECT_EPISODE);
 
         $this->sendMessageEventAnswer($data,
             [

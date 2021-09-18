@@ -6,7 +6,6 @@ use Astaroth\Anilibria\Method;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
 use Astaroth\DataFetcher\Events\MessageEvent as EventData;
 use Astaroth\Support\Facades\Create;
-use Astaroth\Support\Facades\Request;
 use Astaroth\Support\Facades\Session;
 use Astaroth\Support\Facades\Upload;
 use Astaroth\VkKeyboard\Contracts\Keyboard\Button\FactoryInterface;
@@ -17,22 +16,21 @@ use Astaroth\VkUtils\Builders\Message;
 
 final class AnilibriaService
 {
-    public const FIRST_EPISODE = "first-episode";
-    public const LAST_EPISODE = "last-episode";
+    public const FIRST_EPISODE = "_first-episode";
+    public const LAST_EPISODE = "_last-episode";
 
-    public const VK_CACHE_PREVIEW = "vk_cache_preview";
+    public const VK_CACHE_PREVIEW = "_vk_cache_preview";
+    public const CURRENT_EPISODE = "_current-episode";
 
-    public const CURRENT_EPISODE = "current-episode";
     public const DATA = "data";
-    public const MIRROR = "https://dl-20210906-654.anilibria.cf";
+    public const MIRROR = "https://dl4.anilib.top";
 
-    public const SELECT_EPISODE = "select-episode";
-    public const ANIME_SEARCH = "anime-search";
-    public const ANIME_RANDOM = "anime-random";
+    public const SELECT_EPISODE = "_select-episode";
+    public const ANIME_SEARCH = "_anime-search";
+    public const ANIME_RANDOM = "_anime-random";
 
-    public const ENABLED = "enabled";
     public const FOUND = "found";
-    public const SELECTED = "selected";
+    public const SELECT = "select";
     public const CODE = "code";
 
     public const MENU = "menu";
@@ -40,10 +38,13 @@ final class AnilibriaService
     public const BACK = "back";
     public const PLAY = "play";
     public const WATCH = "watch";
+    public const ANIME = "anime";
     public const EPISODE = "episode";
 
     public const WRONG_SELECTED_NOTICE = 19;
+
     public const NOT_FOUND_ANIME_NOTICE = 404;
+    public const REGEX_INTEGER = "/^\d+/";
 
     /** singleton */
     private function __construct()
@@ -53,10 +54,10 @@ final class AnilibriaService
     /**
      * Генератор текста
      * @param array $data
-     * @param int|null $current_serie
+     * @param int|null $current_episode
      * @return string
      */
-    public static function generateTemplateText(array $data, int $current_serie = null): string
+    public static function generateTemplateText(array $data, int $current_episode = null): string
     {
         $template_text = "%s\n\nТип: %s\nСтатус: %s\nЖанры: %s\nСезон: %s\nОзвучили: %s\nТаймили: %s\n\n%s";
 
@@ -71,8 +72,8 @@ final class AnilibriaService
             $data["description"]
         );
 
-        if (isset($current_serie)) {
-            $text .= "\n\nСерия $current_serie из " . $data["player"]["series"]["last"];
+        if (isset($current_episode)) {
+            $text .= "\n\nСерия $current_episode из " . $data["player"]["series"]["last"];
         }
 
         return $text;
@@ -127,50 +128,29 @@ final class AnilibriaService
             ->setMessage(self::generateTemplateText($anime, $current_episode))
             ->setAttachment($anime[self::VK_CACHE_PREVIEW])
             ->setKeyboard(@json_encode($patch_keyboard))
-            ->setPeerId($data->getPeerId());
+            ->setPeerId($data->getPeerId())
+            ->setDontParseLinks(true);
     }
 
     /**
      * Выбрать желаемый эпизод\серию
      * @param Data|EventData $data
-     * @param Session $session
+     * @param string $code
+     * @param int $desiredEpisode
+     * @return bool
      * @throws \Throwable
      */
-    public static function selectEpisode(Data|EventData $data, Session $session): void
+    public static function selectEpisode(Data|EventData $data, string $code, int $desiredEpisode): bool
     {
-        $anime = new Session($data->getPeerId(), $session->get(self::CODE));
+        $anime = (new Session($data->getPeerId(), self::ANIME))->get($code);
 
-        $desiredEpisode = (int)$data->getText();
-        if ($desiredEpisode && $anime->get(self::LAST_EPISODE) >= $desiredEpisode) {
-            Create::new(self::generateTemplate($data, $anime->get(self::DATA), $desiredEpisode));
-        } else {
-            self::notice($data, self::WRONG_SELECTED_NOTICE);
+        if ($anime[self::LAST_EPISODE] >= $desiredEpisode) {
+            Create::new(self::generateTemplate($data, $anime, $desiredEpisode));
+            return true;
         }
 
-        $session->purge(true);
-    }
-
-    /**
-     * Select anime from search
-     * @param Data $data
-     * @param Session $session
-     * @param string|null $key
-     * @throws \Throwable
-     */
-    public static function select(Data $data, Session $session, string $key = null): void
-    {
-        $anime = $session->get($key);
-        if (!empty($anime)) {
-            $anime_number = (int)$data->getText();
-            $concreteAnime = $anime[$anime_number] ?? null;
-            if ($concreteAnime) {
-                self::animePreviewer($data, $concreteAnime[self::CODE]);
-            }
-            if ($concreteAnime === null) {
-                self::notice($data, self::WRONG_SELECTED_NOTICE);
-            }
-        }
-        $session->purge(true);
+        self::notice($data, self::WRONG_SELECTED_NOTICE);
+        return false;
     }
 
     /**
@@ -185,7 +165,6 @@ final class AnilibriaService
             $anime = Method::getTitle(code: $anime);
         }
         $preview = self::MIRROR . $anime["poster"]["url"];
-
         $link = self::MIRROR . "/release/" . $anime[self::CODE] . ".html";
 
         $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $link) {
@@ -231,44 +210,35 @@ final class AnilibriaService
 
     /**
      * Поиск тайтлов с последующей отправкой в диалог
-     * @param Data $data
-     * @param Session $session
-     * @param string|null $needle
-     * @throws \Throwable
+     * @param string|null $anime_name
+     * @return array|null
+     * @throws \Exception
      */
-    public static function searchTitle(Data $data, Session $session, string $needle = null): void
+    public static function searchTitle(string $anime_name = null): ?array
     {
-        $anime = Method::searchTitles($needle ?? $data->getText());
+        $anime = Method::searchTitles($anime_name);
 
         array_unshift($anime, "");
         unset($anime[0]);
 
         if ($anime === []) {
-            self::notice($data, self::NOT_FOUND_ANIME_NOTICE);
-            $session->purge(true);
-        } else {
-            $template = "Всё что я смог найти, выбрать нужное можно просто отправив цифру\n\n";
-            $payload = [];
-            foreach ($anime as $key => $value) {
-                $name = $value["names"]["ru"] ?? $value["names"]["en"] ?? $value["names"]["alternative"];
-                $template .= "$key. $name\n";
-
-                $payload[$key] =
-                    [
-                        self::CODE => $value[self::CODE],
-                        "name" => $name
-                    ];
-            }
-
-            $session->put(self::FOUND, $payload);
-            $session->put(self::ENABLED, false);
-
-            Create::new(
-                (new Message())
-                    ->setMessage($template)
-                    ->setPeerId($data->getPeerId())
-            );
+            return null;
         }
+
+        $template = "";
+        $found = [];
+        foreach ($anime as $key => $value) {
+            $name = $value["names"]["ru"] ?? $value["names"]["en"] ?? $value["names"]["alternative"];
+            $template .= "$key. $name\n";
+
+            $found[$key] =
+                [
+                    self::CODE => $value[self::CODE],
+                    "name" => $name
+                ];
+        }
+
+        return [self::FOUND => $found, "template" => $template];
 
     }
 
