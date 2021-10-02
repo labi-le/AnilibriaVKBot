@@ -142,7 +142,7 @@ final class ButtonNavigation extends BaseCommands
         );
     }
 
-    #[Payload(["menu" => AnilibriaService::SELECT_EPISODE], Payload::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::SELECT_EPISODE], Payload::CONTAINS)]
     public function switch_episode(Data $data, Request $r): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
