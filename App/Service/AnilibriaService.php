@@ -59,10 +59,11 @@ final class AnilibriaService
      */
     public static function generateTemplateText(array $data, int $current_episode = null): string
     {
-        $template_text = "%s\n\nТип: %s\nСтатус: %s\nЖанры: %s\nСезон: %s\nОзвучили: %s\nТаймили: %s\n\n%s";
+        $template_text = "%s\ncode: #%s\n\nТип: %s\nСтатус: %s\nЖанры: %s\nСезон: %s\nОзвучили: %s\nТаймили: %s\n\n%s";
 
         $text = sprintf($template_text,
             $data["names"]["ru"] ?? $data["names"]["en"],
+            $data["code"],
             $data["type"]["full_string"],
             $data["status"]["string"],
             implode(", ", $data["genres"]),
@@ -144,7 +145,7 @@ final class AnilibriaService
     {
         $anime = (new Session($data->getPeerId(), self::ANIME))->get($code);
 
-        if ($anime[self::LAST_EPISODE] >= $desiredEpisode) {
+        if ($anime[self::LAST_EPISODE] >= $desiredEpisode && $desiredEpisode !== 0) {
             Create::new(self::generateTemplate($data, $anime, $desiredEpisode));
             return true;
         }
@@ -170,7 +171,7 @@ final class AnilibriaService
         $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $link) {
             return [
                 [
-                    $factory->link("Зеркало", $link, []),
+                    $factory->link("Смотреть на Anilibria", $link, []),
                     $factory->callback("Play",
                         [
                             AnilibriaService::MENU => AnilibriaService::PLAY,
@@ -198,7 +199,7 @@ final class AnilibriaService
     public static function notice(Data $data, int $noticeType): void
     {
         $message = match ($noticeType) {
-            self::WRONG_SELECTED_NOTICE => "Ты чё цифры попутал 😠",
+            self::WRONG_SELECTED_NOTICE => "Ты чё цифры попутал 😠\nВыбери верный вариант. Я от тебя не отстану 😡",
             self::NOT_FOUND_ANIME_NOTICE => "Я ничево не смогла найти 🥺",
         };
 
@@ -229,7 +230,9 @@ final class AnilibriaService
         $found = [];
         foreach ($anime as $key => $value) {
             $name = $value["names"]["ru"] ?? $value["names"]["en"] ?? $value["names"]["alternative"];
-            $template .= "$key. $name\n";
+            $code = $value["code"];
+
+            $template .= "$key. $name\ncode: #$code\n";
 
             $found[$key] =
                 [
