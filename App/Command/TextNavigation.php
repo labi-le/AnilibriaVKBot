@@ -56,10 +56,10 @@ final class TextNavigation extends BaseCommands
         $this->searchAnime($data, mb_substr($data->getText(), 6));
     }
 
-    #[MessageRegex("/#(.*)/u")]
+    #[MessageRegex(AnilibriaService::STARTS_WITH_LATTICE)]
     public function playForCodename(Data $data)
     {
-        preg_match("/#(.*)/u", $data->getText(), $matches);
+        preg_match(AnilibriaService::STARTS_WITH_LATTICE, $data->getText(), $matches);
         unset($matches[0]);
 
         try {

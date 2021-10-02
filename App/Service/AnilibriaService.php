@@ -44,7 +44,8 @@ final class AnilibriaService
     public const WRONG_SELECTED_NOTICE = 19;
 
     public const NOT_FOUND_ANIME_NOTICE = 404;
-    public const REGEX_INTEGER = "/^\d+/";
+
+    public const STARTS_WITH_LATTICE = "/^#(.*)/u";
 
     /** singleton */
     private function __construct()
