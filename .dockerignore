@@ -1,6 +1,5 @@
-#.env
-docker
-docker-compose.yml
+.env
+Dockerfile
 LICENSE
 README.md
 vendor
