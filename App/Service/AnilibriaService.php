@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Astaroth\Anilibria\Method;
@@ -13,6 +15,7 @@ use Astaroth\VkKeyboard\Facade;
 use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
 use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
 use Astaroth\VkUtils\Builders\Message;
+use function is_string;
 
 final class AnilibriaService
 {
