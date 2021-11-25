@@ -25,7 +25,7 @@ final class StartWizard extends BaseCommands
         Message("меню"), Message("начать"), Message("старт"), Message("оняме"),
         Message("/start"), Message("помощь"), Message("help"), Message("хелп")
     ]
-    public function getStarted(Data $data, Create $create): void
+    public function getStarted(): void
     {
         $keyboard = Facade::createKeyboardBasic(function (FactoryInterface $factory) {
             return [
@@ -34,11 +34,9 @@ final class StartWizard extends BaseCommands
             ];
         }, false);
 
-        $create(
-            (new \Astaroth\VkUtils\Builders\Message())
-                ->setPeerId($data->getPeerId())
-                ->setMessage("Приветик %full-name\nВоспользуйся кнопками и они тебя наверняка приведут к успеху! 🥰")
-                ->setKeyboard($keyboard)
-        );
+        $this
+            ->message("Приветик %full-name\nВоспользуйся кнопками и они тебя наверняка приведут к успеху! 🥰")
+            ->keyboard($keyboard)
+            ->send();
     }
 }
