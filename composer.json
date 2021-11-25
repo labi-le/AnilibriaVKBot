@@ -12,7 +12,7 @@
     "minimum-stability": "stable",
 
     "require": {
-        "labile/astaroth-core": ">=2",
+        "labile/astaroth-core": "dev-rolling",
         "labile/anilibria-api-wrapper": ">=1"
     },
 

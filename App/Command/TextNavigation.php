@@ -58,7 +58,7 @@ final class TextNavigation extends BaseCommands
     public function playForCodename(MessageRegex $regex, Data $data)
     {
         try {
-            AnilibriaService::animePreviewer($data, $regex->getMatches()[1]);
+            AnilibriaService::animePreviewer($data, $regex[1]);
         } catch (Throwable) {
             $this->message("Аниме не найдено, возможно допущена опечатка");
         }
