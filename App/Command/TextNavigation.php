@@ -14,6 +14,7 @@ use Astaroth\Support\Facades\Create;
 use Astaroth\Support\Facades\Session;
 use Astaroth\TextMatcher;
 use Astaroth\Support\Facades\State as StateFacade;
+use Throwable;
 
 #[Conversation(Conversation::PERSONAL_DIALOG)]
 #[MessageNew]
@@ -24,15 +25,10 @@ final class TextNavigation extends BaseCommands
     {
         $result = AnilibriaService::searchTitle($anime_name ?? $data->getText());
         if ($result === null) {
-            $this->message($data->getPeerId(), "Я ничево не смогла найти");
+            $this->message("Я ничево не смогла найти")->send();
         } else {
             $textTemplate = $result["template"];
-
-            Create::new(
-                (new \Astaroth\VkUtils\Builders\Message())
-                    ->setPeerId($data->getPeerId())
-                    ->setMessage("Выбрать необходимое аниме можно просто отправив его code (вместе с #)\n\n" . $textTemplate)
-            );
+            $this->message("Выбрать необходимое аниме можно просто отправив его code (вместе с #)\n\n" . $textTemplate)->send();
         }
 
         //for callback buttons
@@ -50,22 +46,19 @@ final class TextNavigation extends BaseCommands
     }
 
 
-    #[Message("поиск", TextMatcher::START_AS)]
+    #[Message("поиск", Message::START_AS)]
     public function simplySearch(Data $data): void
     {
         $this->searchAnime($data, mb_substr($data->getText(), 6));
     }
 
     #[MessageRegex(AnilibriaService::STARTS_WITH_LATTICE)]
-    public function playForCodename(Data $data)
+    public function playForCodename(MessageRegex $regex, Data $data)
     {
-        preg_match(AnilibriaService::STARTS_WITH_LATTICE, $data->getText(), $matches);
-        unset($matches[0]);
-
         try {
-            AnilibriaService::animePreviewer($data, $matches[1]);
-        } catch (\Throwable) {
-            $this->message($data->getPeerId(), "Аниме не найдено, возможно допущена опечатка");
+            AnilibriaService::animePreviewer($data, $regex->getMatches()[1]);
+        } catch (Throwable) {
+            $this->message("Аниме не найдено, возможно допущена опечатка");
         }
     }
 
