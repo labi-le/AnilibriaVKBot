@@ -25,9 +25,9 @@ use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
 final class ButtonNavigation extends BaseCommands
 {
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_SEARCH])]
-    public function searchAnimeButton(Data $data, Request $r): void
+    public function searchAnimeButton(Data $data): void
     {
-        $r::call("messages.sendMessageEventAnswer",
+        Request::call("messages.sendMessageEventAnswer",
             [
                 "event_id" => $data->getEventId(),
                 "user_id" => $data->getUserId(),
@@ -45,10 +45,10 @@ final class ButtonNavigation extends BaseCommands
     }
 
     #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], PayloadValidation::CONTAINS)]
-    public function watch(Data $data, Request $r)
+    public function watch(Data $data)
     {
         $link = $data->getPayload()[AnilibriaService::EPISODE];
-        $r::call("messages.sendMessageEventAnswer",
+        Request::call("messages.sendMessageEventAnswer",
             [
                 "event_id" => $data->getEventId(),
                 "user_id" => $data->getUserId(),

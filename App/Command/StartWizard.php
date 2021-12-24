@@ -6,6 +6,7 @@ namespace App\Command;
 use App\Service\AnilibriaService;
 use Astaroth\Attribute\ClassAttribute\Conversation;
 use Astaroth\Attribute\ClassAttribute\Event;
+use Astaroth\Attribute\Method\Debug;
 use Astaroth\Attribute\Method\Message;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\Enums\ConversationType;
@@ -23,6 +24,7 @@ final class StartWizard extends BaseCommands
      * @throws Throwable
      */
     #[
+        Debug,
         Message("меню"), Message("начать"), Message("старт"), Message("оняме"),
         Message("/start"), Message("помощь"), Message("help"), Message("хелп")
     ]

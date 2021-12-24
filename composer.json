@@ -18,14 +18,14 @@
 
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "App/"
         }
     },
 
     "scripts": {
         "serve": [
             "Composer\\Config::disableProcessTimeout",
-            "php -S 0.0.0.0:8000"
+            "php -S 0.0.0.0:8002"
         ]
     },
     "require-dev": {
