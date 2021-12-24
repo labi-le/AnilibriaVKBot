@@ -1346,12 +1346,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/labi-le/astaroth-core.git",
-                "reference": "0de995251d29599cbd1c5c235a596f518b25ba08"
+                "reference": "daa9bc1fce4d6280535714b1c8cf2d9b01288805"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labi-le/astaroth-core/zipball/0de995251d29599cbd1c5c235a596f518b25ba08",
-                "reference": "0de995251d29599cbd1c5c235a596f518b25ba08",
+                "url": "https://api.github.com/repos/labi-le/astaroth-core/zipball/daa9bc1fce4d6280535714b1c8cf2d9b01288805",
+                "reference": "daa9bc1fce4d6280535714b1c8cf2d9b01288805",
                 "shasum": ""
             },
             "require": {
@@ -1404,7 +1404,7 @@
                 "issues": "https://github.com/labi-le/astaroth-core/issues",
                 "source": "https://github.com/labi-le/astaroth-core/tree/2.9.0"
             },
-            "time": "2021-12-24T15:28:57+00:00"
+            "time": "2021-12-24T17:21:03+00:00"
         },
         {
             "name": "labile/text-matcher",

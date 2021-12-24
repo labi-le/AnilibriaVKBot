@@ -148,7 +148,7 @@ final class ButtonNavigation extends BaseCommands
     }
 
     #[Payload([AnilibriaService::MENU => AnilibriaService::SELECT_EPISODE], PayloadValidation::CONTAINS)]
-    public function switch_episode(Data $data, Request $r): void
+    public function switch_episode(Data $data): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
         $session = new Session($data->getPeerId(), AnilibriaService::SELECT_EPISODE);
@@ -162,7 +162,7 @@ final class ButtonNavigation extends BaseCommands
                 "text" => "Какая тебе серия нужна?"
             ]);
 
-        $r::call("messages.delete",
+        Request::call("messages.delete",
             [
                 "conversation_message_ids" => $data->getConversationMessageId(),
                 "peer_id" => $data->getPeerId()
