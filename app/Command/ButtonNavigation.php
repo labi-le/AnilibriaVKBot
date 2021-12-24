@@ -6,19 +6,22 @@ namespace App\Command;
 
 use App\Service\AnilibriaService;
 use Astaroth\Anilibria\Method;
-use Astaroth\Attribute\Conversation;
-use Astaroth\Attribute\Event\MessageEvent;
-use Astaroth\Attribute\Payload;
+use Astaroth\Attribute\ClassAttribute\Conversation;
+use Astaroth\Attribute\ClassAttribute\Event;
+use Astaroth\Attribute\Method\Payload;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\DataFetcher\Events\MessageEvent as Data;
+use Astaroth\Enums\ConversationType;
+use Astaroth\Enums\Events;
+use Astaroth\Enums\PayloadValidation;
 use Astaroth\Support\Facades\Request;
 use Astaroth\Support\Facades\Session;
 use Astaroth\Support\Facades\State;
 use Astaroth\Support\Facades\Upload;
 use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
 
-#[Conversation(Conversation::PERSONAL_DIALOG)]
-#[MessageEvent]
+#[Event(Events::MESSAGE_EVENT)]
+#[Conversation(ConversationType::PERSONAL)]
 final class ButtonNavigation extends BaseCommands
 {
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_SEARCH])]
@@ -41,7 +44,7 @@ final class ButtonNavigation extends BaseCommands
         State::add($data->getPeerId(), AnilibriaService::ANIME_SEARCH);
     }
 
-    #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], Payload::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], PayloadValidation::CONTAINS)]
     public function watch(Data $data, Request $r)
     {
         $link = $data->getPayload()[AnilibriaService::EPISODE];
@@ -63,7 +66,7 @@ final class ButtonNavigation extends BaseCommands
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_RANDOM])]
     public function randomAnimeButton(Data $data): void
     {
-        $this->sendMessageEventAnswer($data,
+        $this->request()->sendMessageEventAnswer($data,
             [
                 "type" => "show_snackbar",
                 "text" => "Бросаю кубик &#127922;"
@@ -73,7 +76,7 @@ final class ButtonNavigation extends BaseCommands
     }
 
 
-    #[Payload([AnilibriaService::MENU => AnilibriaService::PLAY], Payload::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::PLAY], PayloadValidation::CONTAINS)]
     /**
      * Кэширование и подготовка к просмотру
      */
@@ -103,7 +106,7 @@ final class ButtonNavigation extends BaseCommands
 
         }
 
-        $this->messagesEdit(
+        $this->request()->messagesEdit(
             AnilibriaService::generateTemplate
             (
                 $data,
@@ -114,8 +117,8 @@ final class ButtonNavigation extends BaseCommands
         );
     }
 
-    #[Payload([AnilibriaService::MENU => AnilibriaService::BACK], Payload::CONTAINS)]
-    #[Payload([AnilibriaService::MENU => AnilibriaService::FORWARD], Payload::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::BACK], PayloadValidation::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::FORWARD], PayloadValidation::CONTAINS)]
     /**
      * Динамический плеер для пролистывания серий
      */
@@ -138,13 +141,13 @@ final class ButtonNavigation extends BaseCommands
 
         $session->put($payload_anime_code, array_merge($anime, [AnilibriaService::CURRENT_EPISODE => $current]));
 
-        $this->messagesEdit(
+        $this->request()->messagesEdit(
             AnilibriaService::generateTemplate($data, $anime, $current),
             $data->getConversationMessageId()
         );
     }
 
-    #[Payload([AnilibriaService::MENU => AnilibriaService::SELECT_EPISODE], Payload::CONTAINS)]
+    #[Payload([AnilibriaService::MENU => AnilibriaService::SELECT_EPISODE], PayloadValidation::CONTAINS)]
     public function switch_episode(Data $data, Request $r): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
@@ -153,7 +156,7 @@ final class ButtonNavigation extends BaseCommands
         $session->put(AnilibriaService::CODE, $payload_anime_code);
         State::add($data->getPeerId(), AnilibriaService::SELECT_EPISODE);
 
-        $this->sendMessageEventAnswer($data,
+        $this->request()->sendMessageEventAnswer($data,
             [
                 "type" => "show_snackbar",
                 "text" => "Какая тебе серия нужна?"

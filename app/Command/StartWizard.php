@@ -4,22 +4,23 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\AnilibriaService;
-use Astaroth\Attribute\Conversation;
-use Astaroth\Attribute\Event\MessageNew;
-use Astaroth\Attribute\Message;
+use Astaroth\Attribute\ClassAttribute\Conversation;
+use Astaroth\Attribute\ClassAttribute\Event;
+use Astaroth\Attribute\Method\Message;
 use Astaroth\Commands\BaseCommands;
-use Astaroth\DataFetcher\Events\MessageNew as Data;
-use Astaroth\Support\Facades\Create;
+use Astaroth\Enums\ConversationType;
+use Astaroth\Enums\Events;
 use Astaroth\VkKeyboard\Contracts\Keyboard\Button\FactoryInterface;
 use Astaroth\VkKeyboard\Facade;
 use Astaroth\VkKeyboard\Object\Keyboard\Button\Text;
+use Throwable;
 
-#[Conversation(Conversation::PERSONAL_DIALOG)]
-#[MessageNew]
+#[Event(Events::MESSAGE_NEW)]
+#[Conversation(ConversationType::PERSONAL)]
 final class StartWizard extends BaseCommands
 {
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     #[
         Message("меню"), Message("начать"), Message("старт"), Message("оняме"),
@@ -27,7 +28,7 @@ final class StartWizard extends BaseCommands
     ]
     public function getStarted(): void
     {
-        $keyboard = Facade::createKeyboardBasic(function (FactoryInterface $factory) {
+        $keyboard = Facade::createKeyboardBasic(static function (FactoryInterface $factory) {
             return [
                 [$factory->callback("Поиск", [AnilibriaService::MENU => AnilibriaService::ANIME_SEARCH], Text::COLOR_GRAY)],
                 [$factory->callback('Случайное аниме', [AnilibriaService::MENU => AnilibriaService::ANIME_RANDOM], Text::COLOR_BLUE)],

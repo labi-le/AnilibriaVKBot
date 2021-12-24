@@ -5,24 +5,26 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\AnilibriaService;
-use Astaroth\Attribute\Conversation;
-use Astaroth\Attribute\Event\MessageNew;
-use Astaroth\Attribute\Message;
-use Astaroth\Attribute\MessageRegex;
-use Astaroth\Attribute\State;
+
+use Astaroth\Attribute\ClassAttribute\Conversation;
+use Astaroth\Attribute\ClassAttribute\Event;
+use Astaroth\Attribute\General\State;
+use Astaroth\Attribute\Method\Message;
+use Astaroth\Attribute\Method\MessageRegex;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\DataFetcher\Events\MessageNew as Data;
-use Astaroth\Support\Facades\Create;
+use Astaroth\Enums\ConversationType;
+use Astaroth\Enums\Events;
+use Astaroth\Enums\MessageValidation;
 use Astaroth\Support\Facades\Session;
-use Astaroth\TextMatcher;
 use Astaroth\Support\Facades\State as StateFacade;
 use Throwable;
 
-#[Conversation(Conversation::PERSONAL_DIALOG)]
-#[MessageNew]
+#[Event(Events::MESSAGE_NEW)]
+#[Conversation(ConversationType::PERSONAL)]
 final class TextNavigation extends BaseCommands
 {
-    #[State(AnilibriaService::ANIME_SEARCH, State::PEER)]
+    #[State(AnilibriaService::ANIME_SEARCH, ConversationType::ALL)]
     public function searchAnime(Data $data, string $anime_name = null): void
     {
         $result = AnilibriaService::searchTitle($anime_name ?? $data->getText());
@@ -37,7 +39,7 @@ final class TextNavigation extends BaseCommands
         StateFacade::remove($data->getPeerId(), AnilibriaService::ANIME_SEARCH);
     }
 
-    #[State(AnilibriaService::SELECT_EPISODE, State::PEER)]
+    #[State(AnilibriaService::SELECT_EPISODE, ConversationType::ALL)]
     public function selectEpisode(Data $data): void
     {
         $episode = (int)$data->getText();
@@ -48,7 +50,7 @@ final class TextNavigation extends BaseCommands
     }
 
 
-    #[Message("поиск", Message::START_AS)]
+    #[Message("поиск", MessageValidation::START_AS)]
     public function simplySearch(Data $data): void
     {
         $this->searchAnime($data, mb_substr($data->getText(), 6));

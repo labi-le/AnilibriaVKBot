@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use Astaroth\Attribute\ClientInfo;
-use Astaroth\Attribute\Conversation;
-use Astaroth\Attribute\Event\MessageNew;
+use Astaroth\Attribute\ClassAttribute\Conversation;
+use Astaroth\Attribute\ClassAttribute\Event;
+use Astaroth\Attribute\Method\ClientInfo;
 use Astaroth\Commands\BaseCommands;
+use Astaroth\Enums\ConversationType;
+use Astaroth\Enums\Events;
 
-#[Conversation(Conversation::PERSONAL_DIALOG)]
-#[MessageNew]
+#[Event(Events::MESSAGE_NEW)]
+#[Conversation(ConversationType::PERSONAL)]
 class Compatibility extends BaseCommands
 {
     #[ClientInfo([], keyboard: false, inline_keyboard: false, carousel: false)]

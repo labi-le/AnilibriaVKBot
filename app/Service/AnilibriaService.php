@@ -105,7 +105,7 @@ final class AnilibriaService
 
         $last_episode = $anime["player"]["series"]["last"];
 
-        $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $stream) {
+        $keyboard = Facade::createKeyboardInline(static function (FactoryInterface $factory) use ($anime, $stream) {
             return [
                 [
                     $factory->callback("Назад", [self::MENU => self::BACK, self::CODE => $anime[self::CODE]], Text::COLOR_BLUE),
@@ -172,7 +172,7 @@ final class AnilibriaService
         $preview = self::MIRROR . $anime["poster"]["url"];
         $link = self::MIRROR . "/release/" . $anime[self::CODE] . ".html";
 
-        $keyboard = Facade::createKeyboardInline(function (FactoryInterface $factory) use ($anime, $link) {
+        $keyboard = Facade::createKeyboardInline(static function (FactoryInterface $factory) use ($anime, $link) {
             return [
                 [
                     $factory->link("Смотреть на Anilibria", $link, []),
