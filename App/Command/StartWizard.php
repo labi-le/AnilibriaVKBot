@@ -24,7 +24,6 @@ final class StartWizard extends BaseCommands
      * @throws Throwable
      */
     #[
-        Debug,
         Message("меню"), Message("начать"), Message("старт"), Message("оняме"),
         Message("/start"), Message("помощь"), Message("help"), Message("хелп")
     ]
