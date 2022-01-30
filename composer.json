@@ -13,7 +13,8 @@
 
     "require": {
         "labile/astaroth-core": ">=2.9",
-        "labile/anilibria-api-wrapper": ">=1"
+        "labile/anilibria-api-wrapper": ">=1",
+        "doctrine/annotations": "^1.13"
     },
 
     "autoload": {
