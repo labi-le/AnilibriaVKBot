@@ -12,14 +12,17 @@
     "minimum-stability": "stable",
 
     "require": {
+        "ext-curl": "*",
+        "ext-simplexml": "*",
+        "ext-openssl": "*",
+
         "labile/astaroth-core": ">=2.9",
-        "labile/anilibria-api-wrapper": ">=1",
-        "doctrine/annotations": "^1.13"
+        "labile/anilibria-api-wrapper": ">=1"
     },
 
     "autoload": {
         "psr-4": {
-            "App\\": "App/"
+            "App\\": "app/"
         }
     },
 
@@ -28,10 +31,5 @@
             "Composer\\Config::disableProcessTimeout",
             "php -S 0.0.0.0:8002"
         ]
-    },
-    "require-dev": {
-        "ext-curl": "*",
-        "ext-simplexml": "*",
-        "ext-openssl": "*"
     }
 }

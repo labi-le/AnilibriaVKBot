@@ -6,7 +6,6 @@ namespace App\Command;
 use App\Service\AnilibriaService;
 use Astaroth\Attribute\ClassAttribute\Conversation;
 use Astaroth\Attribute\ClassAttribute\Event;
-use Astaroth\Attribute\Method\Debug;
 use Astaroth\Attribute\Method\Message;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\Enums\ConversationType;

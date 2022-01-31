@@ -169,7 +169,7 @@ final class AnilibriaService
         if (is_string($anime)) {
             $anime = Method::getTitle(code: $anime);
         }
-        
+
         $preview = self::MIRROR . $anime['posters']['original']['url'];
         $link = self::MIRROR . "/release/" . $anime[self::CODE] . ".html";
 
@@ -248,6 +248,11 @@ final class AnilibriaService
 
         return [self::FOUND => $found, "template" => $template];
 
+    }
+
+    public static function posterNormalizer(array $animeData): string
+    {
+        return self::MIRROR . $animeData['posters']['original']['url'];
     }
 
 }

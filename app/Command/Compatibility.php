@@ -10,11 +10,15 @@ use Astaroth\Attribute\Method\ClientInfo;
 use Astaroth\Commands\BaseCommands;
 use Astaroth\Enums\ConversationType;
 use Astaroth\Enums\Events;
+use Throwable;
 
 #[Event(Events::MESSAGE_NEW)]
 #[Conversation(ConversationType::PERSONAL)]
 class Compatibility extends BaseCommands
 {
+    /**
+     * @throws Throwable
+     */
     #[ClientInfo([], keyboard: false, inline_keyboard: false, carousel: false)]
     public function keyboardIncompatability(): bool
     {

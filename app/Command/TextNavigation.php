@@ -24,6 +24,9 @@ use Throwable;
 #[Conversation(ConversationType::PERSONAL)]
 final class TextNavigation extends BaseCommands
 {
+    /**
+     * @throws Throwable
+     */
     #[State(AnilibriaService::ANIME_SEARCH, ConversationType::ALL)]
     public function searchAnime(Data $data, string $anime_name = null): void
     {
@@ -39,6 +42,9 @@ final class TextNavigation extends BaseCommands
         StateFacade::remove($data->getPeerId(), AnilibriaService::ANIME_SEARCH);
     }
 
+    /**
+     * @throws Throwable
+     */
     #[State(AnilibriaService::SELECT_EPISODE, ConversationType::ALL)]
     public function selectEpisode(Data $data): void
     {
@@ -50,6 +56,9 @@ final class TextNavigation extends BaseCommands
     }
 
 
+    /**
+     * @throws Throwable
+     */
     #[Message("поиск", MessageValidation::START_AS)]
     public function simplySearch(Data $data): void
     {

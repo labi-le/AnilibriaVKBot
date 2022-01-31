@@ -19,11 +19,16 @@ use Astaroth\Support\Facades\Session;
 use Astaroth\Support\Facades\State;
 use Astaroth\Support\Facades\Upload;
 use Astaroth\VkUtils\Builders\Attachments\Message\PhotoMessages;
+use Exception;
+use Throwable;
 
 #[Event(Events::MESSAGE_EVENT)]
 #[Conversation(ConversationType::PERSONAL)]
 final class ButtonNavigation extends BaseCommands
 {
+    /**
+     * @throws Throwable
+     */
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_SEARCH])]
     public function searchAnimeButton(Data $data): void
     {
@@ -44,6 +49,9 @@ final class ButtonNavigation extends BaseCommands
         State::add($data->getPeerId(), AnilibriaService::ANIME_SEARCH);
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Payload([AnilibriaService::MENU => AnilibriaService::WATCH], PayloadValidation::CONTAINS)]
     public function watch(Data $data)
     {
@@ -63,6 +71,9 @@ final class ButtonNavigation extends BaseCommands
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Payload([AnilibriaService::MENU => AnilibriaService::ANIME_RANDOM])]
     public function randomAnimeButton(Data $data): void
     {
@@ -79,6 +90,7 @@ final class ButtonNavigation extends BaseCommands
     #[Payload([AnilibriaService::MENU => AnilibriaService::PLAY], PayloadValidation::CONTAINS)]
     /**
      * Кэширование и подготовка к просмотру
+     * @throws Exception|Throwable
      */
     public function play(Data $data, int $current = 1)
     {
@@ -89,7 +101,7 @@ final class ButtonNavigation extends BaseCommands
         if ($anime === null) {
             $anime = Method::getTitle(code: $payload_anime_code);
 
-            $preview = AnilibriaService::MIRROR . $anime["poster"]["url"];
+            $preview = AnilibriaService::posterNormalizer($anime);
             $anime[AnilibriaService::VK_CACHE_PREVIEW] = Upload::attachments(new PhotoMessages($preview))[0];
 
             $first_episode = $anime["player"]["series"]["first"];
@@ -121,6 +133,7 @@ final class ButtonNavigation extends BaseCommands
     #[Payload([AnilibriaService::MENU => AnilibriaService::FORWARD], PayloadValidation::CONTAINS)]
     /**
      * Динамический плеер для пролистывания серий
+     * @throws Throwable
      */
     public function switcher(Data $data): void
     {
@@ -147,8 +160,11 @@ final class ButtonNavigation extends BaseCommands
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Payload([AnilibriaService::MENU => AnilibriaService::SELECT_EPISODE], PayloadValidation::CONTAINS)]
-    public function switch_episode(Data $data): void
+    public function switchEpisode(Data $data): void
     {
         $payload_anime_code = $data->getPayload()[AnilibriaService::CODE];
         $session = new Session($data->getPeerId(), AnilibriaService::SELECT_EPISODE);
