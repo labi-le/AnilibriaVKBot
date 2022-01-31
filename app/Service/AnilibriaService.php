@@ -169,7 +169,8 @@ final class AnilibriaService
         if (is_string($anime)) {
             $anime = Method::getTitle(code: $anime);
         }
-        $preview = self::MIRROR . $anime["poster"]["url"];
+        
+        $preview = self::MIRROR . $anime['posters']['original']['url'];
         $link = self::MIRROR . "/release/" . $anime[self::CODE] . ".html";
 
         $keyboard = Facade::createKeyboardInline(static function (FactoryInterface $factory) use ($anime, $link) {
